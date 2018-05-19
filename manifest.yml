@@ -1,0 +1,5 @@
+---
+applications:
+- name: ola-hansard
+  memory: 512M
+  buildpack: git://github.com/heroku/heroku-buildpack-clojure.git
