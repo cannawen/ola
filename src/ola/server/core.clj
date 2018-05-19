@@ -31,6 +31,7 @@
 
 (def routes
   [[[:get "/api/transcripts"]
-    (fn [_]
-      {:status 200
-       :body (get-transcripts "zimmer")})]])
+    (fn [request]
+      (let [{:keys [speaker]} (request :params)]
+        {:status 200
+         :body (get-transcripts speaker)}))]])

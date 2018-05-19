@@ -16,6 +16,7 @@
   (fn [_ _]
     {:ajax {:method :get
             :uri "/api/transcripts"
+            :params {:speaker "zimmer"}
             :on-success (fn [response]
                           (dispatch [:-handle-transcripts! response]))}}))
 
