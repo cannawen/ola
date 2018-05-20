@@ -6,7 +6,6 @@
     [cheshire.core :as json]
     [clojure.java.io :as io]))
 
-
 (defn speaker [el]
   (->
     (s/select (s/tag :strong) el)
@@ -122,6 +121,18 @@
                           :anchor (subject-anchor el)}))
       [])))
 
+(defn parse-all []
+  (->> (io/file "data/html/")
+       file-seq
+       (filter (fn [file] (.isFile file)))
+       (filter (fn [file] (string/ends-with? file ".html")))
+       (mapcat (fn [file]
+                 (let [[_ date] (re-matches #"(\d{4}-\d{2}-\d{2}).html" (.getName file))]
+                   (->> (slurp (.getPath file))
+                       parse-transcript-with-subject
+                       (map (fn [transcript]
+                              (assoc transcript :date date)))))))))
+
 (defn convert-to-json! [function folder-name]
   (doseq [file (filter (fn [file] (string/ends-with? file ".html")) (file-seq (io/file "data/html/")))]
     (->
@@ -130,4 +141,3 @@
       (function)
       (json/generate-string {:pretty true})
       (->> (spit (str "data/json/" folder-name "/" (string/replace (.getName file) ".html" ".json")))))))
-

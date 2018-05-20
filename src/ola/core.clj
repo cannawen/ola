@@ -12,6 +12,7 @@
    :omni/http-port 8080})
 
 (defn start! []
+  (ola.server.core/load-data!)
   (omni/start! omni/system config))
 
 (defn stop! []

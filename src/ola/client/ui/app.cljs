@@ -28,13 +28,13 @@
 
 (defn hansard-view []
   [:div
-   (for [transcript @(subscribe [:transcripts])]
+   (for [[date transcripts] (group-by :date @(subscribe [:transcripts]))]
      [:div.transcript
-      {:key (transcript :date)}
-      [:h2 (transcript :date)]
+      {:key date}
+      [:h2 date]
       [:table
        [:tbody
-        (for [{:keys [speaker text anchor]} (transcript :data)]
+        (for [{:keys [speaker text anchor]} transcripts]
           [:tr
            {:key anchor}
            [:td {:style {:white-space "nowrap"
