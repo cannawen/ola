@@ -2,6 +2,7 @@
   (:require
     [clojure.java.io :as io]
     [ola.parser.core :as parser]
+    [clojure.set :as s]
     [clojure.data.json :as json]
     [clojure.string :as string]
     [ring.middleware.params :refer [wrap-params]]
@@ -31,11 +32,28 @@
          (fn [f]
            (> (count (f :data)) 0)))))
 
+(defn get-speakers []
+  (->> (io/file "data/json/transcript")
+       (file-seq)
+       (filter (fn [f] (.isFile f)))
+       (map (fn [f]
+              (->
+                (.getPath f)
+                (slurp)
+                (json/read-str :key-fn keyword)
+                (->> (map :speaker))
+                (set))))
+       (apply s/union)))
+
 (def routes
   [[[:get "/api/transcripts"]
     (fn [request]
       (let [{:keys [speaker]} (request :params)]
-        (println request)
         {:status 200
          :body (get-transcripts speaker)}))
-    [wrap-keyword-params wrap-params]]])
+    [wrap-keyword-params wrap-params]]
+
+   [[:get "/api/speakers"]
+    (fn [_]
+      {:status 200
+       :body (get-speakers)})]])
