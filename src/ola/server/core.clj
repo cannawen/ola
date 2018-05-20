@@ -3,7 +3,9 @@
     [clojure.java.io :as io]
     [ola.parser.core :as parser]
     [clojure.data.json :as json]
-    [clojure.string :as string])
+    [clojure.string :as string]
+    [ring.middleware.params :refer [wrap-params]]
+    [ring.middleware.keyword-params :refer [wrap-keyword-params]])
   (:import (java.io File)))
 
 (defn get-speaker-lines [transcript speaker]
@@ -33,5 +35,7 @@
   [[[:get "/api/transcripts"]
     (fn [request]
       (let [{:keys [speaker]} (request :params)]
+        (println request)
         {:status 200
-         :body (get-transcripts speaker)}))]])
+         :body (get-transcripts speaker)}))
+    [wrap-keyword-params wrap-params]]])
