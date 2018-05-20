@@ -1,14 +1,24 @@
 (ns ola.client.state.events
   (:require
     [re-frame.core :refer [reg-event-fx dispatch reg-fx]]
-    [bloom.omni.fx.ajax :as ajax]))
+    [bloom.omni.fx.ajax :as ajax]
+    [bloom.omni.fx.router :as router]))
 
 (reg-fx :ajax ajax/fx)
+
+(reg-fx :router router/fx)
 
 (reg-event-fx
   :init!
   (fn [{db :db} _]
-    {:db {:transcripts []}}))
+    {:router [:init!]
+     :db {:page nil
+          :transcripts []}}))
+
+(reg-event-fx
+  :set-page!
+  (fn [{db :db} [_ page]]
+    {:db (assoc db :page page)}))
 
 (reg-event-fx
   :set-query!

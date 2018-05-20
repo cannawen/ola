@@ -3,6 +3,11 @@
     [re-frame.core :refer [reg-sub]]))
 
 (reg-sub
+  :page
+  (fn [db _]
+    (db :page)))
+
+(reg-sub
   :query
   (fn [db _]
     (db :query)))

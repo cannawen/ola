@@ -1,6 +1,10 @@
 (ns ola.client.ui.app
   (:require
-    [re-frame.core :refer [subscribe dispatch]]))
+    [re-frame.core :refer [subscribe dispatch]]
+    [ola.client.state.routes :as routes]))
+
+(defn index-page []
+  [:div "Index"])
 
 (defn search-view []
   [:form
@@ -31,8 +35,17 @@
               (for [t text]
                 [:p t]))]])]]])])
 
+(defn search-page []
+  [:div
+   [search-view]
+   [hansard-view]])
+
 (defn app-view []
   [:div
    [:h1 "Ontario Legislative Assembly"]
-   [search-view]
-   [hansard-view]])
+   [:a {:href (routes/index)} "index"]
+   [:a {:href (routes/search)} "search"]
+   (case @(subscribe [:page])
+     :index [index-page]
+     :search [search-page]
+     nil)])
