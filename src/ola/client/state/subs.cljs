@@ -15,4 +15,9 @@
 (reg-sub
   :transcripts
   (fn [db _]
-    (take 5 (db :transcripts))))
+    (db :transcripts)))
+
+(reg-sub
+  :speakers
+  (fn [db _]
+    (db :speakers)))

@@ -4,7 +4,9 @@
     [ola.client.state.routes :as routes]))
 
 (defn index-page []
-  [:div "Index"])
+  [:div
+   (for [speaker @(subscribe [:speakers])]
+     [:div.speaker speaker])])
 
 (defn search-view []
   [:form

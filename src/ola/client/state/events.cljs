@@ -12,7 +12,9 @@
   :init!
   (fn [{db :db} _]
     {:router [:init!]
+     :dispatch [:-fetch-speakers!]
      :db {:page nil
+          :speakers []
           :transcripts []}}))
 
 (reg-event-fx
@@ -29,6 +31,19 @@
   :search!
   (fn [{db :db} _]
     {:dispatch [:-fetch-transcripts! (db :query)]}))
+
+(reg-event-fx
+  :-fetch-speakers!
+  (fn [_ _]
+    {:ajax {:method :get
+            :uri "/api/speakers"
+            :on-success (fn [response]
+                          (dispatch [:-handle-speakers! response]))}}))
+
+(reg-event-fx
+  :-handle-speakers!
+  (fn [{db :db} [_ speakers]]
+    {:db (assoc db :speakers speakers)}))
 
 (reg-event-fx
   :-fetch-transcripts!
