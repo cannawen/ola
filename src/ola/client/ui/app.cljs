@@ -1,10 +1,20 @@
 (ns ola.client.ui.app
   (:require
-    [re-frame.core :refer [subscribe]]))
+    [re-frame.core :refer [subscribe dispatch]]))
 
-(defn app-view []
+(defn search-view []
+  [:form
+   {:on-submit (fn [e]
+                 (.preventDefault e)
+                 (dispatch [:search!]))}
+   [:input.search {:type "search"
+                   :value @(subscribe [:query])
+                   :on-change (fn [e]
+                                (dispatch [:set-query! (.. e -target -value)]))}]
+   [:button "Go"]])
+
+(defn hansard-view []
   [:div
-   [:h1 "Hello World"]
    (for [transcript @(subscribe [:transcripts])]
      ^{:key (transcript :date)}
      [:div.transcript
@@ -18,5 +28,11 @@
                          :vertical-align "top"}} speaker]
            [:td {:style {:vertical-align "top"}}
             (into [:div.text]
-                  (for [t text]
-                    [:p t]))]])]]])])
+              (for [t text]
+                [:p t]))]])]]])])
+
+(defn app-view []
+  [:div
+   [:h1 "Ontario Legislative Assembly"]
+   [search-view]
+   [hansard-view]])

@@ -3,6 +3,11 @@
     [re-frame.core :refer [reg-sub]]))
 
 (reg-sub
+  :query
+  (fn [db _]
+    (db :query)))
+
+(reg-sub
   :transcripts
   (fn [db _]
-    (db :transcripts)))
+    (take 5 (db :transcripts))))

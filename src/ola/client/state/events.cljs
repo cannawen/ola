@@ -8,8 +8,17 @@
 (reg-event-fx
   :init!
   (fn [{db :db} _]
-    {:db {:transcripts []}
-     :dispatch [:-fetch-transcripts! "zimmer"]}))
+    {:db {:transcripts []}}))
+
+(reg-event-fx
+  :set-query!
+  (fn [{db :db} [_ query]]
+    {:db (assoc db :query query)}))
+
+(reg-event-fx
+  :search!
+  (fn [{db :db} _]
+    {:dispatch [:-fetch-transcripts! (db :query)]}))
 
 (reg-event-fx
   :-fetch-transcripts!
