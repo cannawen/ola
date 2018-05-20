@@ -8,6 +8,7 @@
   [:div
    (for [speaker @(subscribe [:speakers])]
      [:div.speaker
+      {:key speaker}
       [:a
        {:href (routes/search-results {:query speaker})}
        speaker]])])
@@ -28,14 +29,14 @@
 (defn hansard-view []
   [:div
    (for [transcript @(subscribe [:transcripts])]
-     ^{:key (transcript :date)}
      [:div.transcript
+      {:key (transcript :date)}
       [:h2 (transcript :date)]
       [:table
        [:tbody
         (for [{:keys [speaker text anchor]} (transcript :data)]
-          ^{:key anchor}
           [:tr
+           {:key anchor}
            [:td {:style {:white-space "nowrap"
                          :vertical-align "top"}} speaker]
            [:td {:style {:vertical-align "top"}}
