@@ -13,24 +13,20 @@
   (fn [{db :db} _]
     {:router [:init!]
      :dispatch [:-fetch-speakers!]
-     :db {:page nil
+     :db {:page {:id nil
+                 :data nil}
           :speakers []
           :transcripts []}}))
 
 (reg-event-fx
   :set-page!
-  (fn [{db :db} [_ page]]
-    {:db (assoc db :page page)}))
-
-(reg-event-fx
-  :set-query!
-  (fn [{db :db} [_ query]]
-    {:db (assoc db :query query)}))
+  (fn [{db :db} [_ page data]]
+    {:db (assoc db :page {:id page :data data})}))
 
 (reg-event-fx
   :search!
-  (fn [{db :db} _]
-    {:dispatch [:-fetch-transcripts! (db :query)]}))
+  (fn [{db :db} [_ query]]
+    {:dispatch [:-fetch-transcripts! query]}))
 
 (reg-event-fx
   :-fetch-speakers!

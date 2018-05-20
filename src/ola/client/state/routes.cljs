@@ -8,3 +8,7 @@
 
 (router/defroute search "/search" []
   (dispatch [:set-page! :search]))
+
+(router/defroute search-results "/search/:query" [query]
+  (dispatch [:search! query])
+  (dispatch [:set-page! :search]))
