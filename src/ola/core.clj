@@ -1,6 +1,7 @@
 (ns ola.core
   (:gen-class)
   (:require
+    [ola.server.analysis.core :as data]
     [bloom.omni.core :as omni]
     [ola.server.core :refer [routes]]))
 
@@ -12,7 +13,7 @@
    :omni/http-port 8080})
 
 (defn start! []
-  (ola.server.core/load-data!)
+  (data/load-data!)
   (omni/start! omni/system config))
 
 (defn stop! []
