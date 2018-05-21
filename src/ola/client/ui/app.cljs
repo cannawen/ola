@@ -48,9 +48,27 @@
            [:td {:style {:vertical-align "top"}}
             [:a {:href (str "http://www.ontla.on.ca/web/house-proceedings/house_detail.do?Date=" date "#" anchor)} "[src]"]]])]]])])
 
+(defn biases-view []
+  [:div
+   [:table
+    [:thead
+     [:tr
+      [:th "Word"]
+      [:th "Ratio vs Avg"]
+      [:th "Count"]
+      [:th "Others Count"]]]
+    [:tbody
+     (for [[word ratio speaker-count others-count] @(subscribe [:biases])]
+       [:tr {:key word}
+        [:td word]
+        [:td ratio]
+        [:td speaker-count]
+        [:td others-count]])]]])
+
 (defn search-page []
   [:div
    [search-view]
+   [biases-view]
    [hansard-view]])
 
 (defn app-view []

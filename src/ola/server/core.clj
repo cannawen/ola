@@ -15,4 +15,10 @@
    [[:get "/api/speakers"]
     (fn [_]
       {:status 200
-       :body (data/speakers)})]])
+       :body (data/speakers)})]
+
+   [[:get "/api/speakers/biases"]
+    (fn [r]
+      {:status 200
+       :body (data/speaker-word-biases (get-in r [:params :speaker]))})
+    [wrap-keyword-params wrap-params]]])

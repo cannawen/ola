@@ -16,7 +16,8 @@
      :db {:page {:id nil
                  :data nil}
           :speakers []
-          :transcripts []}}))
+          :transcripts []
+          :biases []}}))
 
 (reg-event-fx
   :set-page!
@@ -25,8 +26,9 @@
 
 (reg-event-fx
   :search!
-  (fn [{db :db} [_ query]]
-    {:dispatch [:-fetch-transcripts! query]}))
+  (fn [_ [_ query]]
+    {:dispatch-n [[:-fetch-transcripts! query]
+                  [:-fetch-biases! query]]}))
 
 (reg-event-fx
   :-fetch-speakers!
@@ -54,3 +56,17 @@
   :-handle-transcripts!
   (fn [{db :db} [_ transcripts]]
     {:db (assoc db :transcripts transcripts)}))
+
+(reg-event-fx
+  :-fetch-biases!
+  (fn [_ [_ speaker]]
+    {:ajax {:method :get
+            :uri "/api/speakers/biases"
+            :params {:speaker speaker}
+            :on-success (fn [response]
+                          (dispatch [:-handle-biases! response]))}}))
+
+(reg-event-fx
+  :-handle-biases!
+  (fn [{db :db} [_ biases]]
+    {:db (assoc db :biases biases)}))

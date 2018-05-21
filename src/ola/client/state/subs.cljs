@@ -21,3 +21,8 @@
   :speakers
   (fn [db _]
     (db :speakers)))
+
+(reg-sub
+  :biases
+  (fn [db _]
+    (db :biases)))
