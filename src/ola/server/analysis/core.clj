@@ -20,3 +20,38 @@
   (->> @transcripts
        (map :speaker)
        set))
+
+(defn word-frequencies [transcripts]
+  (->>
+    (map :text transcripts)
+    (flatten)
+    (mapcat (fn [sentence] (re-seq #"\w+" sentence)))
+    (map string/lower-case)
+    (frequencies)
+    (sort-by second)
+    (reverse)))
+
+(defn speaker-word-biases [speaker]
+  (let [speaker-frequencies (into {} (word-frequencies (transcripts-with-speaker speaker)))
+        speaker-total (->> speaker-frequencies
+                           (map second)
+                           (reduce +))
+        all-frequencies (into {} (word-frequencies @transcripts))
+        others-frequencies (->> all-frequencies
+                                (map (fn [[word count]]
+                                       [word (- count (or (speaker-frequencies word) 0))]))
+                                (into {}))
+        others-total (->> others-frequencies
+                          (map second)
+                          (reduce +))]
+    (->> speaker-frequencies
+         (filter (fn [[word _]]
+                   (<= 500 (all-frequencies word))))
+         (map (fn [[word speaker-count]]
+                [word
+                 (float  (/ (/ speaker-count speaker-total)
+                            (/ (others-frequencies word) others-total)))
+                 speaker-count
+                 (or (others-frequencies word) 0)]))
+         (sort-by second)
+         (take-last 10))))
