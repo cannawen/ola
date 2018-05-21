@@ -77,7 +77,7 @@
     html
     (h/parse)
     (h/as-hickory)
-    (s/select (s/or (s/tag :h3) (s/tag :p)))
+    (s/select (s/or (s/tag :h3) (s/tag :h2) (s/tag :p)))
     ; remove initial <p>s before first speaker
     (drop-while (fn [el] (not= "speakerStart" (get-in el [:attrs :class]))))
     ; remove <p>s with .procedure class
@@ -93,7 +93,8 @@
     (remove (fn [el] (string/includes? (-> el :content last) "Interjection")))
     (reduce (fn [memo el]
               (cond
-                (= :h3 (el :tag))
+                (or (= :h3 (el :tag))
+                    (= :h2 (el :tag)))
                 (assoc memo :subject {:text (subject-text el)
                                       :anchor (subject-anchor el)})
 
