@@ -28,7 +28,7 @@
 
 (defn hansard-view []
   [:div
-   (for [[date transcripts] (group-by :date @(subscribe [:transcripts]))]
+   (for [[date transcripts] (reverse (sort-by first (group-by :date @(subscribe [:transcripts]))))]
      [:div.transcript
       {:key date}
       [:h2 date]
