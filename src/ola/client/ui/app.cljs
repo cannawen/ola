@@ -34,15 +34,19 @@
       [:h2 date]
       [:table
        [:tbody
-        (for [{:keys [speaker text anchor]} transcripts]
+        (for [{:keys [speaker text anchor date subject]} transcripts]
           [:tr
            {:key anchor}
            [:td {:style {:white-space "nowrap"
                          :vertical-align "top"}} speaker]
            [:td {:style {:vertical-align "top"}}
+            [:a {:href (str "http://www.ontla.on.ca/web/house-proceedings/house_detail.do?Date=" date "#" (:anchor subject))} (:text subject)]]
+           [:td {:style {:vertical-align "top"}}
             (into [:div.text]
               (for [t text]
-                [:p t]))]])]]])])
+                [:p t]))]
+           [:td {:style {:vertical-align "top"}}
+            [:a {:href (str "http://www.ontla.on.ca/web/house-proceedings/house_detail.do?Date=" date "#" anchor)} "[src]"]]])]]])])
 
 (defn search-page []
   [:div
