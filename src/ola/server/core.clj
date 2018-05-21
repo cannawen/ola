@@ -1,12 +1,9 @@
 (ns ola.server.core
   (:require
-    [clojure.java.io :as io]
     [ola.parser.core :as parser]
-    [clojure.data.json :as json]
     [clojure.string :as string]
     [ring.middleware.params :refer [wrap-params]]
-    [ring.middleware.keyword-params :refer [wrap-keyword-params]])
-  (:import (java.io File)))
+    [ring.middleware.keyword-params :refer [wrap-keyword-params]]))
 
 (defonce transcripts (atom []))
 
