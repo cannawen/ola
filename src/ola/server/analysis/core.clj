@@ -27,6 +27,7 @@
     (flatten)
     (mapcat (fn [sentence] (re-seq #"\w+" sentence)))
     (map string/lower-case)
+    (map keyword)
     (frequencies)
     (sort-by second)
     (reverse)))
@@ -48,7 +49,7 @@
          (filter (fn [[word _]]
                    (<= 500 (all-frequencies word))))
          (map (fn [[word speaker-count]]
-                [word
+                [(name word)
                  (float  (/ (/ speaker-count speaker-total)
                             (/ (others-frequencies word) others-total)))
                  speaker-count
