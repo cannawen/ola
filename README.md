@@ -7,20 +7,20 @@ To improve transparency of Ontario's governance, and enable citizens to stay inf
 ## About
 Parses documents from the [Ontario Legislative Assembly website](http://www.ontla.on.ca/pas/house-proceedings/house-documents.xhtml?locale=en) and uses the data to do searches and analytics. Data is saved in json and raw html format in [ola-data](https://github.com/cannawen/ola-data)
 
-[See it in action](https://ola-hansard.cfapps.io/search/Hon.%20Bob%20Chiarelli) (CI build, might be unstable)
+[See it in action](https://ola-hansard.cfapps.io/search/Hon.%20Bob%20Chiarelli) (CI build)
 
 ## Development
-Developed using Clojure and Clojurescript. Requires Java 8+
+Developed using Clojure and ClojureScript. Requires Java 8+
 
 ### Getting Started
 - type `lein repl` into terminal
 - type `(-main)` into repl to start the server
 - go to `localhost:8080` to view the web site
 
-### Production
+### Deploying
 - type `lein uberjar` into terminal to get an executable `.jar` file
 - deploy `.jar` file to server of your choice (currently using Pivotal Cloud Foundry)
-- set environment variables to:
+- add server environment variables:
   - `ENVIRONMENT=prod`
   - `HTTP_PORT=8080` (or whatever port you want to run on)
 
