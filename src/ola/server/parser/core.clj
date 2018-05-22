@@ -119,17 +119,6 @@
        :subject nil})
     :items))
 
-(defn parse-subjects [html]
-  (->>
-    html
-    (h/parse)
-    (h/as-hickory)
-    (s/select (s/tag :h3))
-    (reduce (fn [memo el]
-              (conj memo {:text (subject-text el)
-                          :anchor (subject-anchor el)}))
-      [])))
-
 (defn parse-all []
   (->> (io/file "data/html/")
        file-seq
