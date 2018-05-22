@@ -56,7 +56,7 @@
                        (= 1 (count (el :content)))
                        (-> el :content first :content nil?))))
     ; remove <p>s with only "Interjection" content
-    (remove (fn [el] (string/includes? (-> el :content last) "Interjection")))
+    ;(remove (fn [el] (string/includes? (-> el :content last) "Interjection")))
     (reduce (fn [memo el]
               (if (= "speakerStart" (get-in el [:attrs :class]))
                 (conj memo {:speaker (speaker el)
@@ -98,7 +98,7 @@
                        (= 1 (count (el :content)))
                        (-> el :content first :content nil?))))
     ; remove <p>s with only "Interjection" content
-    (remove (fn [el] (string/includes? (-> el :content last) "Interjection")))
+    ;(remove (fn [el] (string/includes? (-> el :content last) "Interjection")))
     (reduce (fn [memo el]
               (cond
                 (or (= :h3 (el :tag))
