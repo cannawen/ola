@@ -7,7 +7,7 @@ To improve transparency of Ontario's governance, and enable citizens to stay inf
 ## About
 Parses documents from the [Ontario Legislative Assembly website](http://www.ontla.on.ca/pas/house-proceedings/house-documents.xhtml?locale=en) and uses the data to do searches and analytics. Data is saved in json and raw html format in [ola-data](https://github.com/cannawen/ola-data)
 
-[See it in action](https://ola-hansard.cfapps.io/search/Hon.%20Bob%20Chiarelli) (CI build)
+[Live demo](https://ola-hansard.cfapps.io) (CI build)
 
 ## Development
 Developed using Clojure and ClojureScript. Requires Java 8+
