@@ -6,14 +6,22 @@
     [cheshire.core :as json]
     [clojure.java.io :as io]))
 
+(defn scrub-name [name]
+  (->
+    name
+    (string/replace #":" "")
+    (string/replace #"\(.+\)|^(Mr\.|Ms\.|Mrs\.|Hon\.|L’hon\.|M\.|Miss)" "")
+    (string/replace #"Le Président|The Speaker|The Deputy Speaker|The Acting Speaker"  "The Speaker")
+    (string/replace #"The Clerk-at-the-Table|The Clerk of the Assembly|The Deputy Clerk" "The Clerk")
+    (string/trim)))
+
 (defn speaker [el]
   (->
     (s/select (s/tag :strong) el)
     (first)
     :content
     (last)
-    string/trim
-    (string/replace #":" "")))
+    (scrub-name)))
 
 (defn text [el]
   (->>
