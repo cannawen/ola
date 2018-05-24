@@ -10,7 +10,8 @@
   (->
     name
     (string/replace #":" "")
-    (string/replace #"\(.+\)|^(Mr\.|Ms\.|Mrs\.|Hon\.|L’hon\.|M\.|Miss)" "")
+    (string/replace #"(\().+" "")
+    (string/replace #"^(Mr\.|Ms\.|Mrs\.|Hon\.|L’hon\.|M\.|Miss)" "")
     (string/replace #"Le Président|The Speaker|The Deputy Speaker|The Acting Speaker"  "The Speaker")
     (string/replace #"The Clerk-at-the-Table|The Clerk of the Assembly|The Deputy Clerk" "The Clerk")
     (string/trim)))
