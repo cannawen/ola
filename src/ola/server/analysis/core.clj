@@ -47,12 +47,11 @@
                           (reduce +))]
     (->> speaker-frequencies
          (filter (fn [[word _]]
-                   (<= 500 (all-frequencies word))))
+                   (<= 10 (all-frequencies word))))
          (map (fn [[word speaker-count]]
                 [(name word)
                  (float  (/ (/ speaker-count speaker-total)
                             (/ (others-frequencies word) others-total)))
                  speaker-count
                  (or (others-frequencies word) 0)]))
-         (sort-by second)
-         (take-last 10))))
+         (sort-by second))))
