@@ -7,14 +7,19 @@
     [clojure.java.io :as io]))
 
 (defn scrub-name [name]
-  (->
-    name
-    (string/replace #":" "")
-    (string/replace #"(\().+" "")
-    (string/replace #"^(Mr\.|Ms\.|Mrs\.|Hon\.|L’hon\.|M\.|Miss)" "")
-    (string/replace #"Le Président|The Speaker|The Deputy Speaker|The Acting Speaker"  "The Speaker")
-    (string/replace #"The Clerk-at-the-Table|The Clerk of the Assembly|The Deputy Clerk" "The Clerk")
-    (string/trim)))
+  (cond
+    (boolean (re-find #"Speaker|Président|Deputy" name)) "The Speaker"
+    (boolean (re-find #"Clerk" name)) "The Clerk"
+    (boolean (re-find #"Chair" name)) "The Chair"
+    (boolean (re-find #"voix|Interjection" name)) "Interjection"
+    :else
+      (->
+        name
+        (string/trim)
+        (string/replace #":" "")
+        (string/replace #"(\().+| " "")
+        (string/replace #"^(Mr\.|Mr\.|Ms\.|Mrs\.|Hon\.|L’hon\.|M\.|Miss|Mme|Dr\.|The Hon\.|Rev\.|Chief)" "")
+        (string/trim))))
 
 (defn speaker [el]
   (->
