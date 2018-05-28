@@ -145,3 +145,7 @@
       (function)
       (json/generate-string {:pretty true})
       (->> (spit (str "data/json/" folder-name "/" (string/replace (.getName file) ".html" ".json")))))))
+
+(defn re-parse-data []
+  (convert-to-json! parse-transcript "transcript")
+  (convert-to-json! parse-transcript-with-subject "detailed"))
