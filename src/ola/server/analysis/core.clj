@@ -1,7 +1,19 @@
 (ns ola.server.analysis.core
   (:require
     [ola.server.parser.core :as parser]
-    [clojure.string :as string]))
+    [clojure.string :as string]
+    [cheshire.core :as json]))
+
+(defn speaker-word-biases [speaker min-word]
+  (->>
+    (str "data/json/frequencies/" speaker ".json")
+    (slurp)
+    (json/parse-string)
+    (filter
+      (fn [row]
+        (> (last row) min-word)))
+    (reverse)
+    (take 10)))
 
 (defonce transcripts (atom []))
 
@@ -25,33 +37,23 @@
   (->>
     (map :text transcripts)
     (flatten)
-    (mapcat (fn [sentence] (re-seq #"\w+" sentence)))
+    (mapcat (fn [sentence] (re-seq #"[\wÀ-ÿ'’]+" sentence)))
     (map string/lower-case)
     (map keyword)
     (frequencies)
     (sort-by second)
     (reverse)))
 
-(defn speaker-word-biases [speaker]
-  (let [speaker-frequencies (into {} (word-frequencies (transcripts-with-speaker speaker)))
-        speaker-total (->> speaker-frequencies
-                           (map second)
-                           (reduce +))
-        all-frequencies (into {} (word-frequencies @transcripts))
-        others-frequencies (->> all-frequencies
-                                (map (fn [[word count]]
-                                       [word (- count (or (speaker-frequencies word) 0))]))
-                                (into {}))
-        others-total (->> others-frequencies
-                          (map second)
-                          (reduce +))]
-    (->> speaker-frequencies
-         (filter (fn [[word _]]
-                   (<= 10 (all-frequencies word))))
-         (map (fn [[word speaker-count]]
-                [(name word)
-                 (float  (/ (/ speaker-count speaker-total)
-                            (/ (others-frequencies word) others-total)))
-                 speaker-count
-                 (or (others-frequencies word) 0)]))
-         (sort-by second))))
+(defn compute-word-frequencies [min-word]
+  (map
+    (fn [speaker]
+      {:speaker speaker
+       :data (speaker-word-biases speaker min-word)})
+    (speakers)))
+
+(defn create-speaker-json []
+  (doseq [data (compute-word-frequencies 0)]
+    (spit
+      (str "data/json/frequencies/" (data :speaker) ".json")
+      (json/generate-string (data :data) {:pretty true}))))
+

@@ -62,7 +62,8 @@
   (fn [_ [_ speaker]]
     {:ajax {:method :get
             :uri "/api/speakers/biases"
-            :params {:speaker speaker}
+            :params {:speaker speaker
+                     :min_word 500}
             :on-success (fn [response]
                           (dispatch [:-handle-biases! response]))}}))
 

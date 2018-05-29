@@ -20,5 +20,5 @@
    [[:get "/api/speakers/biases"]
     (fn [r]
       {:status 200
-       :body (data/speaker-word-biases (get-in r [:params :speaker]))})
+       :body (data/speaker-word-biases (get-in r [:params :speaker]) (int (read-string (get-in r [:params :min_word]))))})
     [wrap-keyword-params wrap-params]]])

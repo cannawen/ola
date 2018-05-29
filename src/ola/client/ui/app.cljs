@@ -13,19 +13,6 @@
        {:href (routes/search-results {:query speaker})}
        speaker]])])
 
-(defn search-view []
-  (let [query (r/atom "")]
-    (fn []
-      [:form
-       {:on-submit (fn [e]
-                     (.preventDefault e)
-                     (dispatch [:search! @query]))}
-       [:input.search {:type "search"
-                       :value @query
-                       :on-change (fn [e]
-                                    (reset! query (.. e -target -value)))}]
-       [:button "Go"]])))
-
 (defn hansard-view []
   [:div
    (for [[date transcripts] (reverse (sort-by first (group-by :date @(subscribe [:transcripts]))))]
@@ -67,15 +54,13 @@
 
 (defn search-page []
   [:div
-   [search-view]
    [biases-view]
    [hansard-view]])
 
 (defn app-view []
   [:div
-   [:h1 "Ontario Legislative Assembly"]
-   [:a {:href (routes/index)} "index"]
-   [:a {:href (routes/search)} "search"]
+   [:a {:href "/"}
+    [:h1 "Ontario Legislative Assembly"]]
    (case (:id @(subscribe [:page]))
      :index [index-page]
      :search [search-page]
