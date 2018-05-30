@@ -10,7 +10,8 @@
                  [org.clojure/clojurescript "1.9.946"]
                  [reagent "0.8.1"]
                  [re-frame "0.10.5"]
-                 [org.clojure/spec.alpha "0.1.143"]]
+                 [org.clojure/spec.alpha "0.1.143"]
+                 [com.andrewmcveigh/cljs-time "0.5.2"]]
 
   :main ola.core
 

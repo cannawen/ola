@@ -2,7 +2,9 @@
   (:require
     [reagent.core :as r]
     [re-frame.core :refer [subscribe dispatch]]
-    [ola.client.state.routes :as routes]))
+    [ola.client.state.routes :as routes]
+    [cljs-time.core :as t]
+    [cljs-time.format :as f]))
 
 (defn index-page []
   [:div
@@ -12,6 +14,19 @@
       [:a
        {:href (routes/search-results {:query speaker})}
        speaker]])])
+
+(defn between-time [target-date startY startM startD endY endM endD]
+  (t/within?
+    (t/interval (t/date-time startY startM startD) (t/date-time endY endM endD))
+    (f/parse (f/formatter "YYYY-MM-dd") target-date)))
+
+(defn src-url [date anchor]
+  (let [session (cond
+                  (between-time date 2014 7 1 2016 9 9) "1"
+                  (between-time date 2016 9 11 2018 3 16) "2"
+                  (between-time date 2018 3 18 2018 5 9) "3")
+        parliment "41"]
+    (str "https://www.ola.org/en/legislative-business/house-documents/parliament-" parliment "/session-" session "/" date "/hansard#" anchor)))
 
 (defn hansard-view []
   [:div
@@ -33,7 +48,7 @@
               (for [t text]
                 [:p t]))]
            [:td {:style {:vertical-align "top"}}
-            [:a {:href (str "http://www.ontla.on.ca/web/house-proceedings/house_detail.do?Date=" date "#" anchor)} "[src]"]]])]]])])
+            [:a {:href (src-url date anchor)} "[src]"]]])]]])])
 
 (defn biases-view []
   [:div
