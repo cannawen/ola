@@ -80,10 +80,10 @@
     (filter map?)
     (filter
       (fn [e]
-        (string/starts-with? (get-in e [:attrs :name]) "para")))
+        (string/starts-with? (get-in e [:attrs :id]) "para")))
     (map
       (fn [e]
-        (get-in e [:attrs :name])))
+        (get-in e [:attrs :id])))
     (first)))
 
 (defn parse-transcript-with-subject [html]
@@ -146,6 +146,66 @@
       (json/generate-string {:pretty true})
       (->> (spit (str "data/json/" folder-name "/" (string/replace (.getName file) ".html" ".json")))))))
 
+(defn word-frequencies [transcripts]
+  (->>
+    (map :text transcripts)
+    (flatten)
+    (mapcat (fn [sentence] (re-seq #"[\wÀ-ÿ'’]+" sentence)))
+    (map string/lower-case)
+    (map keyword)
+    (frequencies)
+    (sort-by second)
+    (reverse)))
+
+(defn transcripts-with-speaker [transcripts speaker]
+  (->> transcripts
+       (filter
+         (fn [t]
+           (string/includes?
+             (string/lower-case (t :speaker))
+             (string/lower-case speaker))))))
+
+(defn speaker-word-biases [transcripts speaker min-word]
+  (let [speaker-frequencies (into {} (word-frequencies (transcripts-with-speaker transcripts speaker)))
+        speaker-total (->> speaker-frequencies
+                           (map second)
+                           (reduce +))
+        all-frequencies (into {} (word-frequencies transcripts))
+        others-frequencies (->> all-frequencies
+                                (map (fn [[word count]]
+                                       [word (- count (or (speaker-frequencies word) 0))]))
+                                (into {}))
+        others-total (->> others-frequencies
+                          (map second)
+                          (reduce +))]
+    (->> speaker-frequencies
+         (filter (fn [[word _]]
+                   (<= min-word (all-frequencies word))))
+         (map (fn [[word speaker-count]]
+                [(name word)
+                 (float  (/ (/ speaker-count speaker-total)
+                           (/ (inc (others-frequencies word)) (inc others-total))))
+                 speaker-count
+                 (or (others-frequencies word) 0)]))
+         (sort-by second))))
+
+(defn compute-word-frequencies [transcripts min-word]
+  (map
+    (fn [speaker]
+      {:speaker speaker
+       :data (speaker-word-biases transcripts speaker min-word)})
+    (->>
+      transcripts
+      (map :speaker)
+      set)))
+
+(defn create-speaker-json [transcripts]
+  (doseq [data (compute-word-frequencies transcripts 0)]
+    (spit
+      (str "data/json/frequencies/" (data :speaker) ".json")
+      (json/generate-string (data :data) {:pretty true}))))
+
 (defn re-parse-data []
   (convert-to-json! parse-transcript "transcript")
-  (convert-to-json! parse-transcript-with-subject "detailed"))
+  (convert-to-json! parse-transcript-with-subject "detailed")
+  (create-speaker-json (parse-all)))

@@ -32,28 +32,3 @@
   (->> @transcripts
        (map :speaker)
        set))
-
-(defn word-frequencies [transcripts]
-  (->>
-    (map :text transcripts)
-    (flatten)
-    (mapcat (fn [sentence] (re-seq #"[\wÀ-ÿ'’]+" sentence)))
-    (map string/lower-case)
-    (map keyword)
-    (frequencies)
-    (sort-by second)
-    (reverse)))
-
-(defn compute-word-frequencies [min-word]
-  (map
-    (fn [speaker]
-      {:speaker speaker
-       :data (speaker-word-biases speaker min-word)})
-    (speakers)))
-
-(defn create-speaker-json []
-  (doseq [data (compute-word-frequencies 0)]
-    (spit
-      (str "data/json/frequencies/" (data :speaker) ".json")
-      (json/generate-string (data :data) {:pretty true}))))
-
